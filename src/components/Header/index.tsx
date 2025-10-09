@@ -66,7 +66,7 @@ function Header() {
       position="static"
       sx={{ backgroundColor: "#6BA259", paddingX: 4, zIndex: 10 }}
     >
-      <Container maxWidth={"xl"}>
+      <Container maxWidth={"xl"} >
         <Toolbar disableGutters>
           <Box
             component={Link}
