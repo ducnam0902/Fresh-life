@@ -1,9 +1,9 @@
-import React from 'react'
+import Title from '../../components/Title'
 
 const Charts = () => {
   return (
     <div>
-      Charts
+      <Title title="Analytics & Charts" subTitle="Visualize your task completion and expense patterns"/>
     </div>
   )
 }
