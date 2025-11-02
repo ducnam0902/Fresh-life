@@ -1,13 +1,158 @@
-import React from 'react';
-import Title from '../../components/Title';
-import { Button } from '@mui/material';
+import {
+  Alert,
+  Button,
+  Snackbar,
+  type SnackbarCloseReason,
+} from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { LuPlus } from "react-icons/lu";
+import TaskTab from "../../components/TaskTab";
+import Title from "../../components/Title";
+import CreateTaskModal from "../../components/CreateTaskModal";
+import taskServices from "../../services/taskServices";
+import { useAuth } from "../../hooks/useAuth";
+
+export interface Task {
+  id?: string;
+  title: string;
+  description?: string;
+  dueDate: string;
+  isCompleted: boolean;
+  priority?: "low" | "medium" | "high";
+  tags?:
+    | "Work"
+    | "Personal"
+    | "Shopping"
+    | "Health"
+    | "Study"
+    | "Project"
+    | "Other";
+  userId?: string;
+}
+
+interface IToast {
+  open: boolean;
+  message: string;
+}
 
 const Tasks: React.FC = () => {
-  return <div>
-      <Title title="Task Management" subTitle="Manage your daily tasks and track progress">
-        <Button variant="contained" color="primary">Add New Task</Button>
+  const user = useAuth();
+
+  const [openModal, setOpenModal] = useState(false);
+  const [toastStatus, setToastStatus] = useState<IToast>({
+    open: false,
+    message: "",
+  });
+  const [taskTodoList, setTaskTodoList] = useState<Task[]>([]);
+  const [taskCompletedList, setTaskCompletedList] = useState<Task[]>([]);
+
+  const handleClose = (
+    event?: React.SyntheticEvent | Event,
+    reason?: SnackbarCloseReason
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setToastStatus({
+      open: false,
+      message: "",
+    });
+  };
+
+  const fetchTaskList = async (userId: string) => {
+    try {
+      const taskData = await taskServices.getTodayTasks(userId);
+      setTaskTodoList(taskData);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchComplatedTask = async (userId: string) => {
+    try {
+      const taskData = await taskServices.getTodayCompletedTasks(userId);
+      setTaskCompletedList(taskData);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleSave = async (task: Omit<Task, "isCompleted">) => {
+    try {
+      const res = await taskServices.addTask({
+        ...task,
+        isCompleted: false,
+        description: task.description || "",
+      });
+      if (res != "") {
+        setToastStatus({
+          open: true,
+          message: "Task added successfully!",
+        });
+        fetchTaskList(user?.uid as string);
+      }
+    } catch (error) {
+      console.error("Error adding task: ", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchTaskList(user?.uid as string);
+    fetchComplatedTask(user?.uid as string);
+  }, [user]);
+
+  const handleAfterCompletedTask = async () => {
+    setToastStatus({
+      open: true,
+      message: "Task completed successfully!",
+    });
+    await fetchTaskList(user?.uid as string);
+    await fetchComplatedTask(user?.uid as string);
+  };
+
+  return (
+    <div>
+      <Title
+        title="Task Management"
+        subTitle="Manage your daily tasks and track progress"
+      >
+        <Button
+          variant="contained"
+          color="primary"
+          startIcon={<LuPlus />}
+          onClick={() => setOpenModal(true)}
+        >
+          Add New Task
+        </Button>
       </Title>
-    </div>;
+      <TaskTab
+        taskTodo={taskTodoList}
+        taskCompleted={taskCompletedList}
+        onCompletedTask={handleAfterCompletedTask}
+      />
+      <CreateTaskModal
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        onSave={handleSave}
+      />
+      <Snackbar
+        open={toastStatus.open}
+        autoHideDuration={6000}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert
+          onClose={handleClose}
+          severity="success"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {toastStatus.message}
+        </Alert>
+      </Snackbar>
+    </div>
+  );
 };
 
 export default Tasks;
