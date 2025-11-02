@@ -51,7 +51,6 @@ const SignIn: React.FC = () => {
           onClick={handleGoogleSignIn}
           size="large"
           startIcon={<GrGoogle size={16} color="#fff"/>}
-          sx={{ textTransform: "none", bgcolor: '#6ba259', '&:hover': { bgcolor: '#38817a' }, fontWeight: '500', fontSize: '16px' }}
         >
           Sign in with Google
         </Button>
