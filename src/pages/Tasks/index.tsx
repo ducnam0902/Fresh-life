@@ -6,11 +6,12 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { LuPlus } from "react-icons/lu";
-import TaskTab from "../../components/TaskTab";
+import TaskTabs from "../../components/TaskTabs";
 import Title from "../../components/Title";
 import CreateTaskModal from "../../components/CreateTaskModal";
 import taskServices from "../../services/taskServices";
 import { useAuth } from "../../hooks/useAuth";
+import useLoading from "../../store/useLoading";
 
 export interface Task {
   id?: string;
@@ -37,6 +38,7 @@ interface IToast {
 
 const Tasks: React.FC = () => {
   const user = useAuth();
+  const { setLoading } = useLoading();
 
   const [openModal, setOpenModal] = useState(false);
   const [toastStatus, setToastStatus] = useState<IToast>({
@@ -69,7 +71,7 @@ const Tasks: React.FC = () => {
     }
   };
 
-  const fetchComplatedTask = async (userId: string) => {
+  const fetchCompletedTask = async (userId: string) => {
     try {
       const taskData = await taskServices.getTodayCompletedTasks(userId);
       setTaskCompletedList(taskData);
@@ -80,6 +82,7 @@ const Tasks: React.FC = () => {
 
   const handleSave = async (task: Omit<Task, "isCompleted">) => {
     try {
+      setLoading(true);
       const res = await taskServices.addTask({
         ...task,
         isCompleted: false,
@@ -94,12 +97,14 @@ const Tasks: React.FC = () => {
       }
     } catch (error) {
       console.error("Error adding task: ", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchTaskList(user?.uid as string);
-    fetchComplatedTask(user?.uid as string);
+    fetchCompletedTask(user?.uid as string);
   }, [user]);
 
   const handleAfterCompletedTask = async () => {
@@ -108,7 +113,7 @@ const Tasks: React.FC = () => {
       message: "Task completed successfully!",
     });
     await fetchTaskList(user?.uid as string);
-    await fetchComplatedTask(user?.uid as string);
+    await fetchCompletedTask(user?.uid as string);
   };
 
   return (
@@ -126,7 +131,7 @@ const Tasks: React.FC = () => {
           Add New Task
         </Button>
       </Title>
-      <TaskTab
+      <TaskTabs
         taskTodo={taskTodoList}
         taskCompleted={taskCompletedList}
         onCompletedTask={handleAfterCompletedTask}

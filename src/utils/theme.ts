@@ -15,12 +15,15 @@ const theme = createTheme({
           color: "#fff",
           textTransform: "none",
           fontWeight: 600,
-          paddingTop: '8px',
-          paddingBottom: '8px',
-          borderRadius: '6px',
+          paddingTop: "8px",
+          paddingBottom: "8px",
+          borderRadius: "6px",
           "&:hover": {
             backgroundColor: "#38817a",
           },
+        },
+        outlined: {
+          textTransform: "none",
         },
       },
     },
