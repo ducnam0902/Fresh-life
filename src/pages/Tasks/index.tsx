@@ -49,7 +49,7 @@ const Tasks: React.FC = () => {
   const [taskCompletedList, setTaskCompletedList] = useState<Task[]>([]);
 
   const handleClose = (
-    event?: React.SyntheticEvent | Event,
+    _event?: React.SyntheticEvent | Event,
     reason?: SnackbarCloseReason
   ) => {
     if (reason === "clickaway") {

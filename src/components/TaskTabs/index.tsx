@@ -17,7 +17,7 @@ interface ITaskTab {
 const TaskTabs = ({ taskTodo, taskCompleted, onCompletedTask }: ITaskTab) => {
   const [activeTab, setActiveTab] = useState(0);
   const user = useAuth();
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleChange = (_event: React.SyntheticEvent, newValue: number) => {
     setActiveTab(newValue);
   };
 
