@@ -1,12 +1,13 @@
 import React from "react";
 import { Box, Button, Typography } from "@mui/material";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { GrGoogle } from "react-icons/gr";
+import { FcGoogle } from "react-icons/fc";
 import { useNavigate } from "react-router";
 import { auth } from "../../services/firebase";
 import useLoading from "../../store/useLoading";
 import routes from "../../utils/routes";
-
+import theme from "../../utils/theme";
+import FreshIcon from "../../assets/fresh-logo.png";
 const googleProvider = new GoogleAuthProvider();
 
 const SignIn: React.FC = () => {
@@ -32,17 +33,61 @@ const SignIn: React.FC = () => {
       alignItems="center"
       height="100vh"
       sx={{
-        background:
-          "linear-gradient(135deg, rgb(107, 162, 89) 0%, rgb(163, 221, 131) 50%, rgb(247, 243, 154) 100%)",
+        position: "relative",
+        background: "#f6f8f6",
+        overflow: "hidden",
       }}
     >
       <Box
-        sx={{ textAlign: "center", p: 6, bgcolor: "white", borderRadius: 3 }}
+        sx={{
+          position: "absolute",
+          left: "-10%",
+          top: "-10%",
+          transform: "translate(0%, 0%)",
+          height: "500px",
+          width: "500px",
+          borderRadius: "50%",
+          backgroundColor: "lightgreen",
+          filter: "blur(120px)",
+          opacity: 0.5,
+        }}
+      ></Box>
+      <Box
+        sx={{
+          position: "absolute",
+          bottom: "-10%",
+          right: "-20%",
+          top: 0,
+          height: "500px",
+          width: "500px",
+          borderRadius: "50%",
+          backgroundColor: "lightgreen",
+          filter: "blur(120px)",
+          transform: "translate(0%, 0%)",
+          opacity: 0.7,
+        }}
+      ></Box>
+
+      <Box
+        sx={{ textAlign: "center", p: 4, width: '300px', bgcolor: "white", borderRadius: 3, borderColor: "#eee", boxShadow: 3 }}
       >
-        <Typography variant="h4" gutterBottom sx={{ mb: 3, color: '#6ba259', fontWeight: '500' }}>
+          <img
+              src={FreshIcon}
+              alt="Logo"
+              style={{ width: 80, height: 80 }}
+            />
+        <Typography
+          variant="h4"
+          gutterBottom
+          sx={{ mb: 3, color: theme.palette.primary.textLight, fontWeight: "500", fontSize: "28px" }}
+        >
           Welcome Back
         </Typography>
-        <Typography variant="body1" gutterBottom sx={{ mb: 4, fontWeight: '400', fontSize: '16px', color: "#0009" }}>
+        <Typography
+          variant="body1"
+          gutterBottom
+          sx={{ mb: 4, fontWeight: "400", fontSize: "14åpx", color: "#0009" }}
+        >
           Sign in to access your task and expense management dashboard
         </Typography>
         <Button
@@ -50,7 +95,8 @@ const SignIn: React.FC = () => {
           color="primary"
           onClick={handleGoogleSignIn}
           size="large"
-          startIcon={<GrGoogle size={16} color="#fff"/>}
+          startIcon={<FcGoogle size={16} color="#fff" />}
+          sx={{ width: '100%' }}
         >
           Sign in with Google
         </Button>

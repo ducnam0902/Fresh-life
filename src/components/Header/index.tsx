@@ -20,27 +20,30 @@ import { useAuth } from "../../hooks/useAuth";
 import { signOut } from "firebase/auth";
 import { auth } from "../../services/firebase";
 import useLoading from "../../store/useLoading";
+import theme from "../../utils/theme";
 
 const pages = [
   {
     name: "Dashboard",
     link: routes.dashboard,
-    icon: <LuLayoutDashboard size={20} color="#fff" />,
+    icon: (
+      <LuLayoutDashboard size={20} color={theme.palette.primary.textMutedLight} />
+    ),
   },
   {
     name: "Tasks",
     link: routes.tasks,
-    icon: <LuCircleCheckBig size={20} color="#fff" />,
+    icon: <LuCircleCheckBig size={20} color={theme.palette.primary.textMutedLight} />,
   },
   {
     name: "Expenses",
     link: routes.expenses,
-    icon: <LuChartSpline size={20} color="#fff" />,
+    icon: <LuChartSpline size={20} color={theme.palette.primary.textMutedLight} />,
   },
   {
     name: "Charts",
     link: routes.charts,
-    icon: <LuChartSpline size={20} color="#fff" />,
+    icon: <LuChartSpline size={20} color={theme.palette.primary.textMutedLight} />,
   },
 ];
 
@@ -64,9 +67,15 @@ function Header() {
   return (
     <AppBar
       position="static"
-      sx={{ backgroundColor: "#6BA259", paddingX: 4, zIndex: 10 }}
+      sx={{
+        backgroundColor: theme.palette.primary.cardLight,
+        paddingX: 4,
+        zIndex: 10,
+        borderBottom: `1px solid ${theme.palette.primary.borderLight}`,
+        boxShadow: "none",
+      }}
     >
-      <Container maxWidth={"xl"} >
+      <Container maxWidth={"xl"}>
         <Toolbar disableGutters>
           <Box
             component={Link}
@@ -85,7 +94,12 @@ function Header() {
             />
             <Typography
               variant="h5"
-              sx={{ fontWeight: "600", paddingRight: 2 }}
+              sx={{
+                fontWeight: "600",
+                paddingRight: 2,
+                color: theme.palette.primary.textLight,
+                letterSpacing: 0.7,
+              }}
             >
               Fresh Life
             </Typography>
@@ -106,17 +120,23 @@ function Header() {
                 alignItems="center"
                 sx={{
                   textDecoration: "none",
-                  color: "white",
+                  color: theme.palette.primary.textMutedLight,
                   borderRadius: "1rem",
                   marginLeft: 3,
-                  "&:hover": { backgroundColor: "#fff3" },
-                  "&.active": { backgroundColor: "#fff3" },
+                  "&:hover": { color: theme.palette.primary.russianGreen },
+                  "&.active": {
+                    color: theme.palette.primary.russianGreen,
+                    borderBottom: `2px solid ${theme.palette.primary.russianGreen}`,
+                  },
+                  "&.active button svg": {
+                    color: `${theme.palette.primary.russianGreen} !important`,
+                  }
                 }}
               >
                 <IconButton>{page.icon}</IconButton>
                 <Typography
                   variant="h5"
-                  sx={{ fontSize: "1rem", fontWeight: "600", paddingRight: 2 }}
+                  sx={{ fontSize: "1rem", fontWeight: "500", paddingRight: 2 }}
                 >
                   {page.name}
                 </Typography>
@@ -131,7 +151,12 @@ function Header() {
             </Tooltip>
             <Typography
               variant="h5"
-              sx={{ fontSize: "1rem", fontWeight: "600", paddingRight: 2 }}
+              sx={{
+                fontSize: "1rem",
+                fontWeight: "600",
+                paddingRight: 2,
+                color: theme.palette.primary.textMutedLight,
+              }}
             >
               {user ? user.displayName : "Guest"}
             </Typography>
@@ -143,7 +168,7 @@ function Header() {
               onClick={handleSignout}
               sx={{
                 textDecoration: "none",
-                color: "white",
+                color: theme.palette.primary.textMutedLight,
                 borderRadius: "1rem",
                 marginLeft: 3,
                 "&:hover": { backgroundColor: "#fff3" },
