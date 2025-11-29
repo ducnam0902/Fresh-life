@@ -7,6 +7,7 @@ import { LuFileCheck } from "react-icons/lu";
 import { FaCircleCheck } from "react-icons/fa6";
 import { BsCurrencyDollar } from "react-icons/bs";
 import { MdShowChart } from "react-icons/md";
+import { useAuth } from "../../hooks/useAuth";
 
 const overviewData = [
   {
@@ -40,10 +41,11 @@ const overviewData = [
 ];
 
 const Dashboard: React.FC = () => {
+  const user= useAuth();
   return (
     <div>
       <Title
-        title="Dashboard Overview"
+        title={`Welcome back, ${user?.displayName || 'User'}`}
         subTitle="Track your daily progress and budget management"
       />
       <Grid container spacing={3}>
