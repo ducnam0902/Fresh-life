@@ -16,14 +16,14 @@ import {
 } from "@mui/material";
 import { availableTags, getPriorityColor, getTagColor } from "../../utils";
 import { FcApproval } from "react-icons/fc";
-import type { Task } from "../../pages/Tasks";
 import theme from "../../utils/theme";
 import { useState } from "react";
 import { IoClose } from "react-icons/io5";
 import { FcOk } from "react-icons/fc";
 import { LuCircleCheckBig } from "react-icons/lu";
+import type { ITask } from "../../types/task.types";
 interface IBaseTaskTab {
-  tasks: Task[];
+  tasks: ITask[];
   handleComplete?: (taskId: string) => void;
   activeTab: number;
   indexTab: number;
@@ -36,9 +36,9 @@ const BaseTaskTab = ({
   handleComplete,
 }: IBaseTaskTab) => {
   const [openModal, setOpenModal] = useState(false);
-  const [completeTask, setCompleteTask] = useState<Task | null>(null);
+  const [completeTask, setCompleteTask] = useState<ITask | null>(null);
 
-  const handleShowModal = (task: Task) => {
+  const handleShowModal = (task: ITask) => {
     setOpenModal(true);
     setCompleteTask(task);
   };
