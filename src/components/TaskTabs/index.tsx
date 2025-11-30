@@ -5,12 +5,12 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
-import type { Task } from "../../pages/Tasks";
 import taskServices from "../../services/taskServices";
 import BaseTaskTab from "../BaseTaskTab";
+import type { ITask } from "../../types/task.types";
 interface ITaskTab {
-  taskTodo: Task[];
-  taskCompleted: Task[];
+  taskTodo: ITask[];
+  taskCompleted: ITask[];
   onCompletedTask: () => void;
 }
 

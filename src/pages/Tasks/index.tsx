@@ -12,24 +12,9 @@ import CreateTaskModal from "../../components/CreateTaskModal";
 import taskServices from "../../services/taskServices";
 import { useAuth } from "../../hooks/useAuth";
 import useLoading from "../../store/useLoading";
+import type { ITask } from "../../types/task.types";
 
-export interface Task {
-  id?: string;
-  title: string;
-  description?: string;
-  dueDate: string;
-  isCompleted: boolean;
-  priority?: "low" | "medium" | "high";
-  tags?:
-    | "Work"
-    | "Personal"
-    | "Shopping"
-    | "Health"
-    | "Study"
-    | "Project"
-    | "Other";
-  userId?: string;
-}
+
 
 interface IToast {
   open: boolean;
@@ -45,8 +30,8 @@ const Tasks: React.FC = () => {
     open: false,
     message: "",
   });
-  const [taskTodoList, setTaskTodoList] = useState<Task[]>([]);
-  const [taskCompletedList, setTaskCompletedList] = useState<Task[]>([]);
+  const [taskTodoList, setTaskTodoList] = useState<ITask[]>([]);
+  const [taskCompletedList, setTaskCompletedList] = useState<ITask[]>([]);
 
   const handleClose = (
     _event?: React.SyntheticEvent | Event,
@@ -80,7 +65,7 @@ const Tasks: React.FC = () => {
     }
   };
 
-  const handleSave = async (task: Omit<Task, "isCompleted">) => {
+  const handleSave = async (task: Omit<ITask, "isCompleted">) => {
     try {
       setLoading(true);
       const res = await taskServices.addTask({

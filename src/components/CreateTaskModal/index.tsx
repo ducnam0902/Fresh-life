@@ -26,26 +26,12 @@ import { useAuth } from "../../hooks/useAuth";
 import moment from "moment";
 import { availablePrioritys, availableTags, getPriorityColor, getTagColor } from "../../utils";
 import theme from "../../utils/theme";
-interface Task {
-  title: string;
-  description?: string;
-  dueDate: string;
-  isCompleted: boolean;
-  priority?: "low" | "medium" | "high";
-  tags?:
-    | "Work"
-    | "Personal"
-    | "Shopping"
-    | "Health"
-    | "Study"
-    | "Project"
-    | "Other";
-}
+import type { ITask } from "../../types/task.types";
 
 interface CreateTaskModalProps {
   open: boolean;
   onClose: () => void;
-  onSave: (task: Omit<Task, "isCompleted">) => void;
+  onSave: (task: Omit<ITask, "isCompleted">) => void;
 }
 
 const taskSchema = z.object({
