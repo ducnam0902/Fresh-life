@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import Title from "../../components/Title";
 import { Button } from "@mui/material";
-import CreateExpenseModal from "../../components/CreateExpenseModal";
+import CreateExpenseModal, { type ExpenseFormData } from "../../components/CreateExpenseModal";
 
 const Expenses: React.FC = () => {
   const [openModal, setOpenModal] = useState(false);
 
-  const handleAddExpense = async () => {
-
+  const handleAddExpense = async (data: ExpenseFormData) => {
+    console.log("New Expense Data:", data);
   }
 
   return (

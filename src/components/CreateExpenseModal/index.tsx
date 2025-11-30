@@ -27,7 +27,7 @@ import { useAuth } from "../../hooks/useAuth";
 interface ICreateExpenseModal {
   open: boolean;
   onClose: () => void;
-  onSave: () => void;
+  onSave: (formValue: ExpenseFormData) => void;
 }
 
 const expenseSchema = z.object({
@@ -60,7 +60,7 @@ const getTagColor = (tag: (typeof availableExpenseTags)[number]) => {
   return tagColors[tag];
 };
 
-type ExpenseFormData = z.infer<typeof expenseSchema>;
+export type ExpenseFormData = z.infer<typeof expenseSchema>;
 
 const CreateExpenseModal = ({ open, onClose, onSave }: ICreateExpenseModal) => {
   const {
