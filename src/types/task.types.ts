@@ -21,3 +21,8 @@ export interface ITask {
     | "Other";
   userId?: string;
 }
+
+export interface IToast {
+  open: boolean;
+  message: string;
+}

@@ -7,10 +7,16 @@ import useLoading from "../../store/useLoading";
 const BaseLayout = () => {
   const { isLoading } = useLoading();
   return (
-    <Box sx={{ backgroundColor: "#fafafa", height: "100vh" }}>
+    <Box
+      sx={{ backgroundColor: "#fafafa", height: "100vh", position: "relative" }}
+    >
       <Header />
       <Container maxWidth="xl" sx={{ padding: 4 }}>
-        {isLoading && <Loading />}
+        {isLoading && (
+          <Loading
+            sx={{ position: "absolute", width: "100%", top: 0, left: 0, opacity: '0.6', backgroundColor: '#ffffff'}}
+          />
+        )}
         <Outlet />
       </Container>
     </Box>

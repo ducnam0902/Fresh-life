@@ -7,6 +7,7 @@ import {
   doc,
   getDoc,
   updateDoc,
+  orderBy,
 } from "firebase/firestore";
 import { db } from "./firebase";
 import moment from "moment";
@@ -27,20 +28,7 @@ const taskServices = {
       taskCollectionRef,
       where("dueDate", "==", today),
       where("userId", "==", userId),
-      where("isCompleted", "==", false)
-    );
-    const data = await getDocs(q);
-    const filterData = data.docs.map((doc) => ({ ...doc.data() as Omit<ITask, 'id'>, id: doc.id }));
-    return filterData;
-  },
-  getTodayCompletedTasks: async (userId: string): Promise<ITask[]> => {
-    const today = moment().startOf("day").format("DD-MM-YYYY");
-    const taskCollectionRef = collection(db, "tasks");
-    const q = query(
-      taskCollectionRef,
-      where("dueDate", "==", today),
-      where("userId", "==", userId),
-      where("isCompleted", "==", true)
+      orderBy("isCompleted", "asc")
     );
     const data = await getDocs(q);
     const filterData = data.docs.map((doc) => ({ ...doc.data() as Omit<ITask, 'id'>, id: doc.id }));
