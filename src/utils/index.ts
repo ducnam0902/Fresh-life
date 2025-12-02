@@ -1,15 +1,25 @@
-import theme from "./theme";
-
 export const getPriorityColor = (priorityLevel: string) => {
   switch (priorityLevel) {
     case "high":
-      return theme.palette.error.main;
+      return {
+        backgroundColor: "#ffe2e2",
+        color: "#c10007",
+      };
     case "medium":
-      return theme.palette.warning.main;
+      return {
+        backgroundColor: "#fef9c2",
+        color: "#a65f00",
+      };
     case "low":
-      return theme.palette.info.main;
+      return {
+        backgroundColor: "#dbeafe",
+        color: "#1447e6",
+      };
     default:
-      return theme.palette.primary.main;
+      return {
+        backgroundColor: "#dbeafe",
+        color: "#1447e6",
+      };
   }
 };
 

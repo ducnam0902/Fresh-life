@@ -301,7 +301,7 @@ export default function CreateTaskModal({
                               width: 12,
                               height: 12,
                               borderRadius: "50%",
-                              backgroundColor: getPriorityColor(item),
+                              backgroundColor: getPriorityColor(item).color,
                             }}
                           />
                            {capitalize(item)}

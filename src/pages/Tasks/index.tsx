@@ -2,68 +2,47 @@ import {
   Alert,
   Button,
   Snackbar,
+  Typography,
   type SnackbarCloseReason,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { LuPlus } from "react-icons/lu";
-import TaskTabs from "../../components/TaskTabs";
-import Title from "../../components/Title";
 import CreateTaskModal from "../../components/CreateTaskModal";
-import taskServices from "../../services/taskServices";
+import Title from "../../components/Title";
 import { useAuth } from "../../hooks/useAuth";
+import taskServices from "../../services/taskServices";
 import useLoading from "../../store/useLoading";
-import type { ITask } from "../../types/task.types";
+import type { ITask, IToast } from "../../types/task.types";
+import theme from "../../utils/theme";
 
-
-
-interface IToast {
-  open: boolean;
-  message: string;
-}
+import TaskItem from "../../components/TaskItem";
 
 const Tasks: React.FC = () => {
   const user = useAuth();
   const { setLoading } = useLoading();
 
+  const [taskTodoList, setTaskTodoList] = useState<ITask[]>([]);
   const [openModal, setOpenModal] = useState(false);
   const [toastStatus, setToastStatus] = useState<IToast>({
     open: false,
     message: "",
   });
-  const [taskTodoList, setTaskTodoList] = useState<ITask[]>([]);
-  const [taskCompletedList, setTaskCompletedList] = useState<ITask[]>([]);
-
-  const handleClose = (
-    _event?: React.SyntheticEvent | Event,
-    reason?: SnackbarCloseReason
-  ) => {
-    if (reason === "clickaway") {
-      return;
-    }
-
-    setToastStatus({
-      open: false,
-      message: "",
-    });
-  };
 
   const fetchTaskList = async (userId: string) => {
     try {
+      setLoading(true);
       const taskData = await taskServices.getTodayTasks(userId);
       setTaskTodoList(taskData);
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const fetchCompletedTask = async (userId: string) => {
-    try {
-      const taskData = await taskServices.getTodayCompletedTasks(userId);
-      setTaskCompletedList(taskData);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  useEffect(() => {
+    fetchTaskList(user?.uid as string);
+  }, [user]);
 
   const handleSave = async (task: Omit<ITask, "isCompleted">) => {
     try {
@@ -86,19 +65,18 @@ const Tasks: React.FC = () => {
       setLoading(false);
     }
   };
+  const handleClose = (
+    _event?: React.SyntheticEvent | Event,
+    reason?: SnackbarCloseReason
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
 
-  useEffect(() => {
-    fetchTaskList(user?.uid as string);
-    fetchCompletedTask(user?.uid as string);
-  }, [user]);
-
-  const handleAfterCompletedTask = async () => {
     setToastStatus({
-      open: true,
-      message: "Task completed successfully!",
+      open: false,
+      message: "",
     });
-    await fetchTaskList(user?.uid as string);
-    await fetchCompletedTask(user?.uid as string);
   };
 
   return (
@@ -116,11 +94,22 @@ const Tasks: React.FC = () => {
           Add New Task
         </Button>
       </Title>
-      <TaskTabs
-        taskTodo={taskTodoList}
-        taskCompleted={taskCompletedList}
-        onCompletedTask={handleAfterCompletedTask}
-      />
+      <Typography
+        variant="h6"
+        color={theme.palette.primary.main}
+        fontSize={"1.4rem"}
+        mb={2}
+      >
+        Today's Tasks
+      </Typography>
+      {taskTodoList.map((task) => (
+        <TaskItem
+          key={task.id}
+          {...task}
+          setToastStatus={setToastStatus}
+          fetchTaskList={fetchTaskList}
+        />
+      ))}
       <CreateTaskModal
         open={openModal}
         onClose={() => setOpenModal(false)}
