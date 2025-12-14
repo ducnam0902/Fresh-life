@@ -97,7 +97,6 @@ const CreateExpenseModal = ({ open, onClose, onSave }: ICreateExpenseModal) => {
     onChange: (v: number) => void
   ) => {
     const rawValue = e.target.value;
-    console.log(Number(rawValue));
     if (!isNaN(Number(rawValue))) {
       const value = Number(rawValue);
       onChange(value);
