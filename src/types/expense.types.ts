@@ -1,0 +1,13 @@
+export interface IBudget {
+  id: string;
+  isMatchPeriod: boolean | null;
+  budgets: number;
+}
+
+export interface IBudgetPeriod {
+  id?: string;
+  title: string;
+  dateFrom: string;
+  dateTo: string;
+  budgets: number;
+}
