@@ -1,7 +1,7 @@
 import moment from "moment";
 import { db } from "./firebase";
 import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
-import type { IBudget, IBudgetPeriod } from "../types/expense.types";
+import type { IBudget, IBudgetPeriod, IExpenseToday } from "../types/expense.types";
 
 const expenseServices = {
   checkTodayBudgets: async (): Promise<IBudget> => {
@@ -48,6 +48,26 @@ const expenseServices = {
         budgets: 0,
       };
     }
+  },
+  addExpense: async (payload: IExpenseToday) => {
+    const expensesRef = collection(db, "expenses");
+    const docRef = await addDoc(expensesRef, payload);
+    return docRef.id;
+  },
+  getTodayExpenses: async (userId: string): Promise<IExpenseToday[]> => {
+    const today = moment().startOf("day").format("DD-MM-YYYY");
+    const expensesRef = collection(db, "expenses");
+    const q = query(
+      expensesRef,
+      where("date", "==", today),
+      where("userId", "==", userId)
+    );
+    const data = await getDocs(q);
+    const filterData = data.docs.map((doc) => ({
+      ...(doc.data() as Omit<IExpenseToday, "id">),
+      id: doc.id,
+    }));
+    return filterData;
   },
 };
 

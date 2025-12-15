@@ -11,3 +11,13 @@ export interface IBudgetPeriod {
   dateTo: string;
   budgets: number;
 }
+
+export interface IExpenseToday {
+  id?: string;
+  title: string;
+  tags: string;
+  amount: number;
+  reason?: string;
+  date: string;
+  userId: string;
+}
