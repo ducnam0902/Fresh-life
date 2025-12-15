@@ -23,11 +23,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import { MdLabel } from "react-icons/md";
 import { useAuth } from "../../hooks/useAuth";
+import type { IExpenseToday } from "../../types/expense.types";
+import moment from "moment";
 
 interface ICreateExpenseModal {
   open: boolean;
   onClose: () => void;
-  onSave: (formValue: ExpenseFormData) => void;
+  onSave: (formValue: IExpenseToday) => void;
 }
 
 const expenseSchema = z.object({
@@ -36,10 +38,9 @@ const expenseSchema = z.object({
     .min(1, "Title is required")
     .max(100, "Title must be less than 100 characters"),
   amount: z
-    .number({
+    .string({
       error: "Amount is required and must be number",
-    })
-    .min(500, "Amount must be greater than 0"),
+    }),
   reason: z.string().optional(),
   tags: z.enum(["Eating", "Drinking", "Transport", "Shopping"], {
     error: "Invalid tag selected",
@@ -62,6 +63,8 @@ const getTagColor = (tag: (typeof availableExpenseTags)[number]) => {
 
 export type ExpenseFormData = z.infer<typeof expenseSchema>;
 
+const today = moment().startOf("day").format("DD-MM-YYYY");
+
 const CreateExpenseModal = ({ open, onClose, onSave }: ICreateExpenseModal) => {
   const {
     control,
@@ -73,7 +76,7 @@ const CreateExpenseModal = ({ open, onClose, onSave }: ICreateExpenseModal) => {
     defaultValues: {
       title: "",
       tags: "Eating",
-      amount: 500,
+      amount: '500',
       reason: "",
     },
   });
@@ -84,21 +87,24 @@ const CreateExpenseModal = ({ open, onClose, onSave }: ICreateExpenseModal) => {
   };
 
   const onSubmit = (formValue: ExpenseFormData) => {
-    const payload = {
+    const payload: IExpenseToday = {
       ...formValue,
       userId: user?.uid ?? "",
+      date: today,
+      amount: Number(formValue.amount.replace(/\./g, '')),
     };
     onSave(payload);
     reset();
+    onClose();
   };
 
   const handleChangeAmount = (
     e: React.ChangeEvent<HTMLInputElement>,
-    onChange: (v: number) => void
+    onChange: (v: string) => void
   ) => {
-    const rawValue = e.target.value;
-    if (!isNaN(Number(rawValue))) {
-      const value = Number(rawValue);
+    const cleanedValue = e.target.value.replace(/\./g, '');
+    if (!isNaN(Number(cleanedValue))) {
+      const value = Number(cleanedValue).toLocaleString('vi-VN');
       onChange(value);
     }
   };

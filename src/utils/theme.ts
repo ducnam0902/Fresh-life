@@ -14,6 +14,7 @@ declare module "@mui/material/styles" {
     cardDark?: string;
     textMutedLight?: string;
     borderLight?: string;
+    borderGray200?:string
   }
   interface SimplePaletteColorOptions {
     backgroundLight?: string;
@@ -28,6 +29,7 @@ declare module "@mui/material/styles" {
     cardDark?: string;
     textMutedLight?: string;
     borderLight?: string;
+    borderGray200?:string;
   }
 
   interface Theme {
@@ -60,7 +62,8 @@ const theme = createTheme({
       cardLight: "#ffffff",
       cardDark: "#1f2937",
       textMutedLight: "#6b7280",
-       borderLight: "#e5e7eb",
+      borderLight: "#e5e7eb",
+      borderGray200: '#f6f3f4',
     },
   },
   components: {

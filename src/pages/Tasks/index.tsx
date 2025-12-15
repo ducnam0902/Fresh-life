@@ -90,6 +90,7 @@ const Tasks: React.FC = () => {
           color="primary"
           startIcon={<LuPlus />}
           onClick={() => setOpenModal(true)}
+          sx={{ textTransform: "none", fontSize: {md: "1rem", xs: "0.7rem"} }}
         >
           Add New Task
         </Button>

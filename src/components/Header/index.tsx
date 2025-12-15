@@ -27,23 +27,35 @@ const pages = [
     name: "Dashboard",
     link: routes.dashboard,
     icon: (
-      <LuLayoutDashboard size={20} color={theme.palette.primary.textMutedLight} />
+      <LuLayoutDashboard
+        size={20}
+        color={theme.palette.primary.textMutedLight}
+      />
     ),
   },
   {
     name: "Tasks",
     link: routes.tasks,
-    icon: <LuCircleCheckBig size={20} color={theme.palette.primary.textMutedLight} />,
+    icon: (
+      <LuCircleCheckBig
+        size={20}
+        color={theme.palette.primary.textMutedLight}
+      />
+    ),
   },
   {
     name: "Expenses",
     link: routes.expenses,
-    icon: <LuChartSpline size={20} color={theme.palette.primary.textMutedLight} />,
+    icon: (
+      <LuChartSpline size={20} color={theme.palette.primary.textMutedLight} />
+    ),
   },
   {
     name: "Charts",
     link: routes.charts,
-    icon: <LuChartSpline size={20} color={theme.palette.primary.textMutedLight} />,
+    icon: (
+      <LuChartSpline size={20} color={theme.palette.primary.textMutedLight} />
+    ),
   },
 ];
 
@@ -69,7 +81,7 @@ function Header() {
       position="static"
       sx={{
         backgroundColor: theme.palette.primary.cardLight,
-        paddingX: 4,
+        paddingX: { xs: 1, md: 4 },
         zIndex: 10,
         borderBottom: `1px solid ${theme.palette.primary.borderLight}`,
         boxShadow: "none",
@@ -99,6 +111,10 @@ function Header() {
                 paddingRight: 2,
                 color: theme.palette.primary.textLight,
                 letterSpacing: 0.7,
+                fontSize: {
+                  xs: "1rem",
+                  lg: "1.5rem",
+                },
               }}
             >
               Fresh Life
@@ -130,7 +146,7 @@ function Header() {
                   },
                   "&.active button svg": {
                     color: `${theme.palette.primary.russianGreen} !important`,
-                  }
+                  },
                 }}
               >
                 <IconButton>{page.icon}</IconButton>
@@ -145,16 +161,16 @@ function Header() {
           </Box>
           <Box sx={{ flexGrow: 0, display: "flex", alignItems: "center" }}>
             <Tooltip title="Open settings">
-              <IconButton sx={{ px: 2 }}>
+              <IconButton sx={{ px: { xs: 1, md: 2 } }}>
                 <Avatar alt="Remy Sharp" src={user?.photoURL ?? ""} />
               </IconButton>
             </Tooltip>
             <Typography
               variant="h5"
               sx={{
-                fontSize: "1rem",
+                fontSize: { xs: "0.8rem", md: "1rem" },
                 fontWeight: "600",
-                paddingRight: 2,
+                paddingRight: {xs: 0, md: 2},
                 color: theme.palette.primary.textMutedLight,
               }}
             >
@@ -170,13 +186,16 @@ function Header() {
                 textDecoration: "none",
                 color: theme.palette.primary.textMutedLight,
                 borderRadius: "1rem",
-                marginLeft: 3,
+                marginLeft: { xs: 1, md: 3 },
                 "&:hover": { backgroundColor: "#fff3" },
                 cursor: "pointer",
               }}
             >
               <IconButton>
-                <LuLogOut size={20} color="#fff" />
+                <LuLogOut
+                  size={20}
+                  color={theme.palette.primary.celadonGreen}
+                />
               </IconButton>
               <Typography
                 variant="h5"
