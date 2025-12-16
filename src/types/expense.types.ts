@@ -21,3 +21,9 @@ export interface IExpenseToday {
   date: string;
   userId: string;
 }
+
+export interface IExpenseSummary {
+  totalExpenses: number;
+  remainExpense: number;
+  usedPercentage: number;
+}

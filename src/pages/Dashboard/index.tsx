@@ -10,19 +10,27 @@ import theme from "../../utils/theme";
 import taskServices from "../../services/taskServices";
 import useLoading from "../../store/useLoading";
 import type { OverviewCountTask } from "../../types/task.types";
+import type { IExpenseSummary } from "../../types/expense.types";
+import expenseServices from "../../services/expenseServices";
+
+type OverviewDataT = OverviewCountTask & IExpenseSummary
 
 const Dashboard: React.FC = () => {
   const user = useAuth();
   const { setLoading } = useLoading();
 
   const [overviewCountData, setOverviewCountData] =
-    useState<OverviewCountTask | null>(null);
+    useState<OverviewDataT | null>(null);
   useEffect(() => {
     const fetchOverviewCountData = async () => {
       try {
         setLoading(true);
         const data = await taskServices.countTask(user?.uid || "");
-        setOverviewCountData(data);
+        const expense = await expenseServices.getRemainBudgetToday(user?.uid || "");
+        setOverviewCountData({
+          ...data,
+          ...expense
+        });
       } catch (error) {
         console.log(error);
       } finally {
@@ -40,17 +48,19 @@ const Dashboard: React.FC = () => {
         subTitle="Track your daily progress and budget management"
       />
       <Grid container spacing={3}>
-        <Grid key={0} size={4}>
+        <Grid key={0} size={{xs: 12, md: 4}}>
           <OverviewCount
             title={"Daily Budget Remaining"}
-            count={overviewCountData?.total ?? 0}
             icon={
               <CiWallet color={theme.palette.primary.textLight} size={25} />
             }
             currency="VND"
+            usedPercentage={overviewCountData?.usedPercentage ?? 0}
+            totalExpense={overviewCountData?.totalExpenses.toLocaleString("vi-VN") ?? '0'}
+            remainExpense={overviewCountData?.remainExpense.toLocaleString("vi-VN") ?? '0' }
           />
         </Grid>
-        <Grid key={1} size={4}>
+        <Grid key={1} size={{xs: 12, md: 4}}>
           <OverviewCount
             title={"Tasks Completed Today"}
             count={overviewCountData?.completed ?? 0}
@@ -62,7 +72,7 @@ const Dashboard: React.FC = () => {
             }
           />
         </Grid>
-        <Grid key={2} size={4}>
+        <Grid key={2} size={{xs: 12, md: 4}}>
           <OverviewCount
             title={"Pending Tasks"}
             count={overviewCountData?.pending ?? 0}
