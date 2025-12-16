@@ -1,7 +1,7 @@
 import moment from "moment";
 import { db } from "./firebase";
 import { addDoc, collection, getDocs, query, where } from "firebase/firestore";
-import type { IBudget, IBudgetPeriod, IExpenseToday } from "../types/expense.types";
+import type { IBudget, IBudgetPeriod, IExpenseSummary, IExpenseToday } from "../types/expense.types";
 
 const expenseServices = {
   checkTodayBudgets: async (): Promise<IBudget> => {
@@ -69,6 +69,18 @@ const expenseServices = {
     }));
     return filterData;
   },
+  getRemainBudgetToday: async (userId: string): Promise<IExpenseSummary> => {
+    const budget = await expenseServices.checkTodayBudgets();
+    if (!budget.isMatchPeriod) return { totalExpenses: 0, remainExpense: 0, usedPercentage: 0 };
+
+    const expenses = await expenseServices.getTodayExpenses(userId);
+    const totalExpenses = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+    return {
+      totalExpenses,
+      remainExpense: budget.budgets - totalExpenses,
+      usedPercentage: budget.budgets === 0 ? 0 : Math.round((totalExpenses / budget.budgets) * 100),
+    };
+  }
 };
 
 export default expenseServices;

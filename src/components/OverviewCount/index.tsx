@@ -4,11 +4,14 @@ import theme from "../../utils/theme";
 
 interface IOverviewCount {
   title: string;
-  count: number;
+  count?: number;
   icon: React.ReactNode;
   currency?: string;
+  usedPercentage?: number;
+  totalExpense?:string;
+  remainExpense?:string
 }
-const OverviewCount = ({ title, count, icon, currency }: IOverviewCount) => {
+const OverviewCount = ({ title, count, icon, currency, usedPercentage, totalExpense, remainExpense }: IOverviewCount) => {
   return (
     <Paper
       elevation={1}
@@ -34,12 +37,12 @@ const OverviewCount = ({ title, count, icon, currency }: IOverviewCount) => {
         {icon}
       </Stack>
       <Typography variant="h4" sx={{ fontWeight: 600, marginTop: 1 }}>
-        {count} {currency && currency}
+          {currency ? `${totalExpense} ${currency}` : count}
       </Typography>
       {currency && (
         <>
           <Slider
-            defaultValue={50}
+            value={usedPercentage}
             aria-label="Budgets"
             valueLabelDisplay="auto"
             disabled
@@ -57,7 +60,7 @@ const OverviewCount = ({ title, count, icon, currency }: IOverviewCount) => {
               color: theme.palette.primary.textMutedLight,
             }}
           >
-            You've spent {count} of your budget today
+            You've {remainExpense} VND of your budget today
           </Typography>
         </>
       )}

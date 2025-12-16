@@ -5,7 +5,6 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  IconButton,
   InputAdornment,
   Stack,
   TextField,
@@ -16,13 +15,12 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import moment from "moment";
 import theme from "../../utils/theme";
-import { IoClose } from "react-icons/io5";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import { useAuth } from "../../hooks/useAuth";
 import { useState } from "react";
-import type { IBudget, IBudgetPeriod } from "../../types/expense.types";
+import type { IBudget } from "../../types/expense.types";
 import expenseServices from "../../services/expenseServices";
 import useLoading from "../../store/useLoading";
 
@@ -30,8 +28,10 @@ const budgetPeriodSchema = z.object({
   title: z.string().min(1, "Title is required"),
   dateFrom: z.string().min(1, "Start date is required"),
   dateTo: z.string().min(1, "End date is required"),
-  budgets: z.number().min(0, "Budget must be at least 0"),
+  budgets: z.string().min(0, "Budget must be at least 0"),
 });
+
+type BudgetPeriodFormData = z.infer<typeof budgetPeriodSchema>;
 
 const today = moment().startOf("day").format("DD-MM-YYYY");
 
@@ -49,20 +49,21 @@ const BudgetPeriodModal = ({ onCreatedBudgets }: IBudgetPeriodModal) => {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<IBudgetPeriod>({
+  } = useForm<BudgetPeriodFormData>({
     resolver: zodResolver(budgetPeriodSchema),
     defaultValues: {
       title: "",
       dateFrom: today,
       dateTo: "",
-      budgets: 500,
+      budgets: "500",
     },
   });
 
-  const onSubmit = async (formValue: IBudgetPeriod) => {
+  const onSubmit = async (formValue: BudgetPeriodFormData) => {
     const payload = {
       ...formValue,
       userId: user?.uid ?? "",
+      budgets: Number(formValue.budgets?.replace(/\./g, "")),
     };
     try {
       setLoading(true);
@@ -86,11 +87,11 @@ const BudgetPeriodModal = ({ onCreatedBudgets }: IBudgetPeriodModal) => {
 
   const handleChangeAmount = (
     e: React.ChangeEvent<HTMLInputElement>,
-    onChange: (v: number) => void
+    onChange: (v: string) => void
   ) => {
-    const rawValue = e.target.value;
-    if (!isNaN(Number(rawValue))) {
-      const value = Number(rawValue);
+    const cleanedValue = e.target.value.replace(/\./g, "");
+    if (!isNaN(Number(cleanedValue))) {
+      const value = Number(cleanedValue).toLocaleString("vi-VN");
       onChange(value);
     }
   };
@@ -99,7 +100,7 @@ const BudgetPeriodModal = ({ onCreatedBudgets }: IBudgetPeriodModal) => {
     <LocalizationProvider dateAdapter={AdapterMoment}>
       <Dialog
         open={openModal}
-        onClose={handleClose}
+        // onClose={handleClose}
         maxWidth="sm"
         fullWidth
         sx={{
@@ -115,30 +116,31 @@ const BudgetPeriodModal = ({ onCreatedBudgets }: IBudgetPeriodModal) => {
             justifyContent: "space-between",
             alignItems: "center",
             p: 3,
-            pb: 2,
+            pb: 0
           }}
         >
-          <Typography
-            variant="h5"
-            sx={{
-              fontWeight: 600,
-              color: theme.palette.primary.main,
-            }}
-          >
-            Add Budget Period
-          </Typography>
-          <IconButton
-            onClick={handleClose}
-            size="small"
-            sx={{
-              color: "#6b7280",
-              "&:hover": {
-                backgroundColor: "#f3f4f6",
-              },
-            }}
-          >
-            <IoClose size={24} />
-          </IconButton>
+          <Box>
+            <Typography
+              variant="h5"
+              sx={{
+                fontWeight: 600,
+                color: theme.palette.primary.main,
+              }}
+            >
+              Add Budget Period
+            </Typography>
+            <Typography
+              variant="h5"
+              textAlign={"left"}
+              mt={1}
+              color={theme.palette.primary.textLight}
+              sx={{
+                fontSize: '1rem'
+              }}
+            >
+              You need to define budget period before taking another action.
+            </Typography>
+          </Box>
         </DialogTitle>
         <form onSubmit={handleSubmit(onSubmit)}>
           <DialogContent>
@@ -315,25 +317,6 @@ const BudgetPeriodModal = ({ onCreatedBudgets }: IBudgetPeriodModal) => {
               gap: 1.5,
             }}
           >
-            <Button
-              onClick={handleClose}
-              variant="outlined"
-              sx={{
-                textTransform: "none",
-                fontSize: "0.9375rem",
-                fontWeight: 500,
-                px: 3,
-                py: 1,
-                borderColor: "#d1d5db",
-                color: "#6b7280",
-                "&:hover": {
-                  borderColor: "#9ca3af",
-                  backgroundColor: "#f9fafb",
-                },
-              }}
-            >
-              Cancel
-            </Button>
             <Button type="submit" variant="contained">
               Add New Expense
             </Button>
