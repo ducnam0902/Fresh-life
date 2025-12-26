@@ -15,7 +15,7 @@ import { LuLogOut } from "react-icons/lu";
 import FreshIcon from "../../assets/fresh-logo.png";
 import { Link, NavLink, useNavigate } from "react-router";
 import routes from "../../utils/routes";
-import { IconButton, Typography } from "@mui/material";
+import { IconButton, Stack, Typography } from "@mui/material";
 import { useAuth } from "../../hooks/useAuth";
 import { signOut } from "firebase/auth";
 import { auth } from "../../services/firebase";
@@ -88,7 +88,7 @@ function Header() {
       }}
     >
       <Container maxWidth={"xl"}>
-        <Toolbar disableGutters>
+        <Toolbar disableGutters sx={{ justifyContent: "space-between" }}>
           <Box
             component={Link}
             to={routes.dashboard}
@@ -112,7 +112,7 @@ function Header() {
                 color: theme.palette.primary.textLight,
                 letterSpacing: 0.7,
                 fontSize: {
-                  xs: "1rem",
+                  xs: ".8rem",
                   lg: "1.5rem",
                 },
               }}
@@ -159,52 +159,59 @@ function Header() {
               </Box>
             ))}
           </Box>
-          <Box sx={{ flexGrow: 0, display: "flex", alignItems: "center" }}>
-            <Tooltip title="Open settings">
-              <IconButton sx={{ px: { xs: 1, md: 2 } }}>
-                <Avatar alt="Remy Sharp" src={user?.photoURL ?? ""} />
-              </IconButton>
-            </Tooltip>
-            <Typography
-              variant="h5"
-              sx={{
-                fontSize: { xs: "0.8rem", md: "1rem" },
-                fontWeight: "600",
-                paddingRight: {xs: 0, md: 2},
-                color: theme.palette.primary.textMutedLight,
-              }}
-            >
-              {user ? user.displayName : "Guest"}
-            </Typography>
-          </Box>
-          <Box>
-            <Box
-              display={"flex"}
-              alignItems="center"
-              onClick={handleSignout}
-              sx={{
-                textDecoration: "none",
-                color: theme.palette.primary.textMutedLight,
-                borderRadius: "1rem",
-                marginLeft: { xs: 1, md: 3 },
-                "&:hover": { backgroundColor: "#fff3" },
-                cursor: "pointer",
-              }}
-            >
-              <IconButton>
-                <LuLogOut
-                  size={20}
-                  color={theme.palette.primary.celadonGreen}
-                />
-              </IconButton>
+          <Stack direction="row" alignItems="center" spacing={2}>
+            <Box sx={{ flexGrow: 0, display: "flex", alignItems: "center" }}>
+              <Tooltip title="Open settings">
+                <IconButton sx={{ px: { xs: 1, md: 2 } }}>
+                  <Avatar alt="Remy Sharp" src={user?.photoURL ?? ""} />
+                </IconButton>
+              </Tooltip>
               <Typography
                 variant="h5"
-                sx={{ fontSize: "1rem", fontWeight: "600", paddingRight: 2 }}
+                sx={{
+                  fontSize: { xs: "0.8rem", md: "1rem" },
+                  fontWeight: "600",
+                  paddingRight: { xs: 0, md: 2 },
+                  color: theme.palette.primary.textMutedLight,
+                }}
               >
-                Logout
+                {user ? user.displayName : "Guest"}
               </Typography>
             </Box>
-          </Box>
+            <Box>
+              <Box
+                display={"flex"}
+                alignItems="center"
+                onClick={handleSignout}
+                sx={{
+                  textDecoration: "none",
+                  color: theme.palette.primary.textMutedLight,
+                  borderRadius: "1rem",
+                  marginLeft: { xs: 1, md: 3 },
+                  "&:hover": { backgroundColor: "#fff3" },
+                  cursor: "pointer",
+                }}
+              >
+                <IconButton>
+                  <LuLogOut
+                    size={20}
+                    color={theme.palette.primary.celadonGreen}
+                  />
+                </IconButton>
+                <Typography
+                  variant="h5"
+                  sx={{
+                    fontSize: "1rem",
+                    fontWeight: "600",
+                    paddingRight: 2,
+                    display: { xs: "none", md: "block" },
+                  }}
+                >
+                  Logout
+                </Typography>
+              </Box>
+            </Box>
+          </Stack>
         </Toolbar>
       </Container>
     </AppBar>

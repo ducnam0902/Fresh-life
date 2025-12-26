@@ -51,3 +51,8 @@ const tagColors: Record<
 export const getTagColor = (tag: (typeof availableTags)[number]) => {
   return tagColors[tag];
 };
+
+
+export const decodeFormatCurrency = (num: string) => num?.replace(/\./g, "");
+
+export const formatCurrency = (num: number) => num.toLocaleString("vi-VN");

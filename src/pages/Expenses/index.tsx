@@ -23,6 +23,7 @@ import type { IToast } from "../../types/task.types";
 import { useAuth } from "../../hooks/useAuth";
 import ExpenseList from "../../components/ExpenseList";
 import theme from "../../utils/theme";
+import { formatCurrency } from "../../utils";
 
 const Expenses: React.FC = () => {
   const { setLoading } = useLoading();
@@ -186,7 +187,7 @@ const Expenses: React.FC = () => {
                   letterSpacing: "0.5px",
                 }}
               >
-                {summaryBudgets.remainExpense?.toLocaleString("vi-VN")} VND
+                {formatCurrency(summaryBudgets.remainExpense)} VND
               </Typography>
             </Stack>
             <Box sx={{ px: 3 }}>
@@ -238,7 +239,7 @@ const Expenses: React.FC = () => {
                     fontSize: "1.2rem",
                   }}
                 >
-                  {summaryBudgets.totalExpenses?.toLocaleString("vi-VN")} VND
+                  {formatCurrency(summaryBudgets.totalExpenses)} VND
                 </Typography>
               </Stack>
               <Stack
@@ -268,7 +269,7 @@ const Expenses: React.FC = () => {
                     fontSize: "1.2rem",
                   }}
                 >
-                  {budgetsToday.budgets?.toLocaleString("vi-VN")} VND
+                  {formatCurrency(budgetsToday.budgets)} VND
                 </Typography>
               </Stack>
             </Stack>

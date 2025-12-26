@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import {
@@ -24,9 +24,15 @@ import { IoClose } from "react-icons/io5";
 import { MdCalendarToday, MdFlag, MdLabel } from "react-icons/md";
 import { useAuth } from "../../hooks/useAuth";
 import moment from "moment";
-import { availablePrioritys, availableTags, getPriorityColor, getTagColor } from "../../utils";
+import {
+  availablePrioritys,
+  availableTags,
+  getPriorityColor,
+  getTagColor,
+} from "../../utils";
 import theme from "../../utils/theme";
 import type { ITask } from "../../types/task.types";
+import InputField from "../InputField";
 
 interface CreateTaskModalProps {
   open: boolean;
@@ -56,21 +62,23 @@ export default function CreateTaskModal({
   onClose,
   onSave,
 }: CreateTaskModalProps) {
+  const formProps = useForm<TaskFormData>({
+    resolver: zodResolver(taskSchema),
+    defaultValues: {
+      title: "",
+      description: "",
+      dueDate: moment().format("YYYY-MM-DD"),
+      priority: "medium",
+      tags: "Personal",
+    },
+  });
+
   const {
     control,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<TaskFormData>({
-    resolver: zodResolver(taskSchema),
-    defaultValues: {
-      title: "",
-      description: "",
-      dueDate: moment().format('YYYY-MM-DD'),
-      priority: "medium",
-      tags: "Personal",
-    },
-  });
+  } = formProps;
 
   const user = useAuth();
 
@@ -84,10 +92,10 @@ export default function CreateTaskModal({
     const task = {
       title: data.title.trim(),
       description: data.description?.trim() || undefined,
-      dueDate: moment(data.dueDate).format('DD-MM-YYYY'),
+      dueDate: moment(data.dueDate).format("DD-MM-YYYY"),
       priority: data.priority,
       tags: data.tags,
-      userId: user?.uid ?? '',
+      userId: user?.uid ?? "",
     };
 
     onSave(task);
@@ -144,21 +152,24 @@ export default function CreateTaskModal({
           <IoClose size={24} />
         </IconButton>
       </DialogTitle>
+      <FormProvider {...formProps}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <DialogContent sx={{ px: 3, pt: 2 }}>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
+              <InputField nameField="title" label={"Task Title"} />
 
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <DialogContent sx={{ px: 3, pt: 2 }}>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}>
-            <Box>
               <Controller
-                name="title"
+                name="description"
                 control={control}
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    label="Task Title"
+                    label="Description"
                     fullWidth
-                    error={!!errors.title}
+                    multiline
+                    rows={3}
                     variant="outlined"
+                    placeholder="Add more details about your task..."
                     sx={{
                       "& .MuiOutlinedInput-root": {
                         "&.Mui-focused fieldset": {
@@ -168,273 +179,209 @@ export default function CreateTaskModal({
                       "& .MuiInputLabel-root.Mui-focused": {
                         color: theme.palette.primary.main,
                       },
+                      paddingBottom: "18px",
                     }}
                   />
                 )}
               />
-              <Typography
-                sx={{
-                  color: "#ef4444",
-                  fontSize: "0.75rem",
-                  mt: 0.5,
-                  ml: 1.75,
-                  height: "16px",
+              <InputField
+                nameField="dueDate"
+                label={"Due Date"}
+                type="date"
+                slotProps={{
+                  input: {
+                    startAdornment: (
+                      <MdCalendarToday
+                        size={20}
+                        style={{ marginRight: 8, color: "#6b7280" }}
+                      />
+                    ),
+                  },
                 }}
-              >
-                {errors?.title ? errors.title.message : " "}
-              </Typography>
-            </Box>
-
-            <Controller
-              name="description"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  label="Description"
-                  fullWidth
-                  multiline
-                  rows={3}
-                  variant="outlined"
-                  placeholder="Add more details about your task..."
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      "&.Mui-focused fieldset": {
-                        borderColor: theme.palette.primary.main,
-                      },
-                    },
-                    "& .MuiInputLabel-root.Mui-focused": {
-                      color: theme.palette.primary.main,
-                    },
-                    paddingBottom: "18px",
-                  }}
-                />
-              )}
-            />
-
-            <Box>
-              <Controller
-                name="dueDate"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    label="Due Date"
-                    type="date"
-                    fullWidth
-                    error={!!errors.dueDate}
-                    slotProps={{
-                      input: {
-                        startAdornment: (<MdCalendarToday
-                          size={20}
-                          style={{ marginRight: 8, color: "#6b7280" }}
-                        />)
-                      }
-                    }}
-                    sx={{
-                      "& .MuiOutlinedInput-root": {
-                        "&.Mui-focused fieldset": {
-                          borderColor: theme.palette.primary.main,
-                        },
-                      },
-                      "& .MuiInputLabel-root.Mui-focused": {
-                        color: theme.palette.primary.main,
-                      },
-                    }}
-                  />
-                )}
               />
-              <Typography
-                sx={{
-                  color: "#ef4444",
-                  fontSize: "0.75rem",
-                  mt: 0.5,
-                  ml: 1.75,
-                  height: "16px",
-                }}
-              >
-                {errors.dueDate ? errors.dueDate.message : " "}
-              </Typography>
-            </Box>
 
-            <Box>
-              <Controller
-                name="priority"
-                control={control}
-                render={({ field }) => (
-                  <FormControl fullWidth error={!!errors.priority}>
-                    <InputLabel
-                      sx={{
-                        "&.Mui-focused": {
-                          color: theme.palette.primary.main,
-                        },
-                      }}
-                    >
-                      Priority
-                    </InputLabel>
-                    <Select
-                      {...field}
-                      input={<OutlinedInput label="Priority" />}
-                      startAdornment={
-                        <MdFlag
-                          size={20}
-                          style={{
-                            marginRight: 8,
-                            marginLeft: 8,
-                            color: "#6b7280",
-                          }}
-                        />
-                      }
-                      sx={{
-                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                          borderColor: theme.palette.primary.main,
-                        },
-                      }}
-                    >
-                      {availablePrioritys.map((item) => (
-                      <MenuItem value={item}>
-                        <Box
-                          sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                        >
-                          <Box
-                            sx={{
-                              width: 12,
-                              height: 12,
-                              borderRadius: "50%",
-                              backgroundColor: getPriorityColor(item).color,
+              <Box>
+                <Controller
+                  name="priority"
+                  control={control}
+                  render={({ field }) => (
+                    <FormControl fullWidth error={!!errors.priority}>
+                      <InputLabel
+                        sx={{
+                          "&.Mui-focused": {
+                            color: theme.palette.primary.main,
+                          },
+                        }}
+                      >
+                        Priority
+                      </InputLabel>
+                      <Select
+                        {...field}
+                        input={<OutlinedInput label="Priority" />}
+                        startAdornment={
+                          <MdFlag
+                            size={20}
+                            style={{
+                              marginRight: 8,
+                              marginLeft: 8,
+                              color: "#6b7280",
                             }}
                           />
-                           {capitalize(item)}
-                        </Box>
-                      </MenuItem>
-                      ))}
-                      
-                    </Select>
-                  </FormControl>
-                )}
-              />
-              <Typography
-                sx={{
-                  color: "#ef4444",
-                  fontSize: "0.75rem",
-                  mt: 0.5,
-                  ml: 1.75,
-                  height: "16px",
-                }}
-              >
-                {errors.priority ? errors.priority.message : " "}
-              </Typography>
-            </Box>
-
-            <Box>
-              <Controller
-                name="tags"
-                control={control}
-                render={({ field }) => (
-                  <FormControl fullWidth error={!!errors.tags}>
-                    <InputLabel
-                      sx={{
-                        "&.Mui-focused": {
-                          color: theme.palette.primary.main,
-                        },
-                      }}
-                    >
-                      Tag
-                    </InputLabel>
-                    <Select
-                      {...field}
-                      input={<OutlinedInput label="Tag" />}
-                      startAdornment={
-                        <MdLabel
-                          size={20}
-                          style={{
-                            marginRight: 8,
-                            marginLeft: 8,
-                            color: "#6b7280",
-                          }}
-                        />
-                      }
-                      sx={{
-                        "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                          borderColor: theme.palette.primary.main,
-                        },
-                      }}
-                    >
-                      {availableTags.map((tag) => {
-                        const colors = getTagColor(tag);
-                        return (
-                          <MenuItem
-                            key={tag}
-                            value={tag}
-                            sx={{
-                              "&.Mui-selected": {
-                                backgroundColor: colors.bg + "40",
-                                "&:hover": {
-                                  backgroundColor: colors.bg + "60",
-                                },
-                              },
-                            }}
-                          >
-                            <Chip
-                              label={tag}
-                              size="small"
+                        }
+                        sx={{
+                          "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                            borderColor: theme.palette.primary.main,
+                          },
+                        }}
+                      >
+                        {availablePrioritys.map((item) => (
+                          <MenuItem value={item}>
+                            <Box
                               sx={{
-                                backgroundColor: colors.bg,
-                                color: colors.color,
-                                fontWeight: 500,
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 1,
                               }}
-                            />
+                            >
+                              <Box
+                                sx={{
+                                  width: 12,
+                                  height: 12,
+                                  borderRadius: "50%",
+                                  backgroundColor: getPriorityColor(item).color,
+                                }}
+                              />
+                              {capitalize(item)}
+                            </Box>
                           </MenuItem>
-                        );
-                      })}
-                    </Select>
-                  </FormControl>
-                )}
-              />
-              <Typography
-                sx={{
-                  color: "#ef4444",
-                  fontSize: "0.75rem",
-                  mt: 0.5,
-                  ml: 1.75,
-                }}
-              >
-                {errors.tags ? errors.tags.message : " "}
-              </Typography>
-            </Box>
-          </Box>
-        </DialogContent>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  )}
+                />
+                <Typography
+                  sx={{
+                    color: "#ef4444",
+                    fontSize: "0.75rem",
+                    mt: 0.5,
+                    ml: 1.75,
+                    height: "16px",
+                  }}
+                >
+                  {errors.priority ? errors.priority.message : " "}
+                </Typography>
+              </Box>
 
-        <DialogActions
-          sx={{
-            p: 2,
-            gap: 1.5,
-          }}
-        >
-          <Button
-            onClick={handleClose}
-            variant="outlined"
+              <Box>
+                <Controller
+                  name="tags"
+                  control={control}
+                  render={({ field }) => (
+                    <FormControl fullWidth error={!!errors.tags}>
+                      <InputLabel
+                        sx={{
+                          "&.Mui-focused": {
+                            color: theme.palette.primary.main,
+                          },
+                        }}
+                      >
+                        Tag
+                      </InputLabel>
+                      <Select
+                        {...field}
+                        input={<OutlinedInput label="Tag" />}
+                        startAdornment={
+                          <MdLabel
+                            size={20}
+                            style={{
+                              marginRight: 8,
+                              marginLeft: 8,
+                              color: "#6b7280",
+                            }}
+                          />
+                        }
+                        sx={{
+                          "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                            borderColor: theme.palette.primary.main,
+                          },
+                        }}
+                      >
+                        {availableTags.map((tag) => {
+                          const colors = getTagColor(tag);
+                          return (
+                            <MenuItem
+                              key={tag}
+                              value={tag}
+                              sx={{
+                                "&.Mui-selected": {
+                                  backgroundColor: colors.bg + "40",
+                                  "&:hover": {
+                                    backgroundColor: colors.bg + "60",
+                                  },
+                                },
+                              }}
+                            >
+                              <Chip
+                                label={tag}
+                                size="small"
+                                sx={{
+                                  backgroundColor: colors.bg,
+                                  color: colors.color,
+                                  fontWeight: 500,
+                                }}
+                              />
+                            </MenuItem>
+                          );
+                        })}
+                      </Select>
+                    </FormControl>
+                  )}
+                />
+                <Typography
+                  sx={{
+                    color: "#ef4444",
+                    fontSize: "0.75rem",
+                    mt: 0.5,
+                    ml: 1.75,
+                  }}
+                >
+                  {errors.tags ? errors.tags.message : " "}
+                </Typography>
+              </Box>
+            </Box>
+          </DialogContent>
+
+          <DialogActions
             sx={{
-              textTransform: "none",
-              fontSize: "0.9375rem",
-              fontWeight: 500,
-              px: 3,
-              py: 1,
-              borderColor: "#d1d5db",
-              color: "#6b7280",
-              "&:hover": {
-                borderColor: "#9ca3af",
-                backgroundColor: "#f9fafb",
-              },
+              p: 2,
+              gap: 1.5,
             }}
           >
-            Cancel
-          </Button>
-          <Button type="submit" variant="contained">
-            Create Task
-          </Button>
-        </DialogActions>
-      </form>
+            <Button
+              onClick={handleClose}
+              variant="outlined"
+              sx={{
+                textTransform: "none",
+                fontSize: "0.9375rem",
+                fontWeight: 500,
+                px: 3,
+                py: 1,
+                borderColor: "#d1d5db",
+                color: "#6b7280",
+                "&:hover": {
+                  borderColor: "#9ca3af",
+                  backgroundColor: "#f9fafb",
+                },
+              }}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" variant="contained">
+              Create Task
+            </Button>
+          </DialogActions>
+        </form>
+      </FormProvider>
     </Dialog>
   );
 }
