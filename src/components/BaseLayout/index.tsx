@@ -14,7 +14,14 @@ const BaseLayout = () => {
       <Container maxWidth="xl" sx={{ padding: 4 }}>
         {isLoading && (
           <Loading
-            sx={{ position: "absolute", width: "100%", top: 0, left: 0, opacity: '0.6', backgroundColor: '#ffffff'}}
+            sx={{
+              position: "absolute",
+              width: "100%",
+              top: 0,
+              left: 0,
+              opacity: "0.6",
+              backgroundColor: "#ffffff",
+            }}
           />
         )}
         <Outlet />

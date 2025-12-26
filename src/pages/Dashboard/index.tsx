@@ -12,6 +12,7 @@ import useLoading from "../../store/useLoading";
 import type { OverviewCountTask } from "../../types/task.types";
 import type { IExpenseSummary } from "../../types/expense.types";
 import expenseServices from "../../services/expenseServices";
+import { formatCurrency } from "../../utils";
 
 type OverviewDataT = OverviewCountTask & IExpenseSummary
 
@@ -56,8 +57,8 @@ const Dashboard: React.FC = () => {
             }
             currency="VND"
             usedPercentage={overviewCountData?.usedPercentage ?? 0}
-            totalExpense={overviewCountData?.totalExpenses.toLocaleString("vi-VN") ?? '0'}
-            remainExpense={overviewCountData?.remainExpense.toLocaleString("vi-VN") ?? '0' }
+            totalExpense={formatCurrency(overviewCountData?.totalExpenses ?? 0) }
+            remainExpense={formatCurrency(overviewCountData?.remainExpense ?? 0) }
           />
         </Grid>
         <Grid key={1} size={{xs: 12, md: 4}}>
